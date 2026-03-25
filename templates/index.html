@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grafos - Ruta de Influencia</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <div class="panel">
+        <h2>Ruta de Influencia</h2>
+
+        <label>Tipo de Origen</label>
+        <select id="tipo_origen"></select>
+
+        <label>Origen</label>
+        <select id="origen"></select>
+
+        <label>Tipo de Destino</label>
+        <select id="tipo_destino" disabled></select>
+
+        <label>Destino</label>
+        <select id="destino" disabled></select>
+
+        <button onclick="calcularRuta()">Calcular Ruta</button>
+
+        <pre id="resultado"></pre>
+    </div>
+
+    <div class="grafo-container">
+        <div id="grafo"></div>
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/nodos.js') }}"></script>
+<script src="{{ url_for('static', filename='js/formularios.js') }}"></script>
+<script src="{{ url_for('static', filename='js/grafo.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ruta.js') }}"></script>
+
+</body>
+</html>
