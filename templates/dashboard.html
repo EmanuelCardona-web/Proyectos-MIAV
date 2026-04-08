@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Respuesta 5 Preguntas</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1f525b 0%, #1a1f2e 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .respuestas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(650px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: #141820;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: slideIn 0.5s ease;
+            border: 1px solid #1f525b;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            padding: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .pregunta-1 .card-header { background: linear-gradient(135deg, #1f525b 0%, #2a6a7a 100%); }
+        .pregunta-2 .card-header { background: linear-gradient(135deg, #1a1f2e 0%, #1f525b 100%); }
+        .pregunta-3 .card-header { background: linear-gradient(135deg, #1f525b 0%, #2a6a7a 100%); }
+        .pregunta-4 .card-header { background: linear-gradient(135deg, #1a1f2e 0%, #1f525b 100%); }
+        .pregunta-5 .card-header { background: linear-gradient(135deg, #1f525b 0%, #2a6a7a 100%); }
+
+        .card-content {
+            padding: 30px;
+            color: #a0c4d4;
+        }
+
+        .respuesta-titulo {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .ruta-container {
+            background: #0f1318;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #1f525b;
+        }
+
+        .ruta-paso {
+            display: inline-block;
+            background: #141820;
+            padding: 8px 15px;
+            border-radius: 6px;
+            margin: 5px;
+            font-size: 0.9em;
+            border-left: 4px solid #1f525b;
+            color: #a0c4d4;
+        }
+
+        .ruta-paso.medio {
+            border-left-color: #2a8a9a;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .ruta-paso.candidato {
+            border-left-color: #2a6a7a;
+            color: #a0c4d4;
+        }
+
+        .ruta-paso.departamento {
+            border-left-color: #1f525b;
+            color: #a0c4d4;
+        }
+
+        .flecha {
+            display: inline-block;
+            margin: 0 5px;
+            color: #1f525b;
+            font-weight: bold;
+        }
+
+        .metrica {
+            background: #141820;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+            border: 1px solid #1f525b;
+        }
+
+        .metrica-label {
+            font-weight: 600;
+            color: #a0c4d4;
+        }
+
+        .metrica-valor {
+            color: #2a8a9a;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .tabla-candidatos {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+            color: #a0c4d4;
+        }
+
+        .tabla-candidatos th {
+            background: #0f1318;
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            color: #2a8a9a;
+            border-bottom: 2px solid #1f525b;
+        }
+
+        .tabla-candidatos td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #1f525b;
+            color: #a0c4d4;
+        }
+
+        .tabla-candidatos tr:hover {
+            background: rgba(31, 82, 91, 0.1);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-critico {
+            background: rgba(200, 50, 50, 0.2);
+            color: #ff7070;
+        }
+
+        .badge-secundario {
+            background: rgba(40, 130, 180, 0.2);
+            color: #6ba3c5;
+        }
+
+        .badge-resiliente {
+            background: rgba(50, 150, 100, 0.2);
+            color: #6fd86f;
+        }
+
+        .estadistica {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .estadistica-item {
+            background: linear-gradient(135deg, #1f525b 0%, #2a6a7a 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .estadistica-valor {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .estadistica-label {
+            font-size: 0.85em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .hallazgo {
+            background: rgba(42, 138, 154, 0.1);
+            border-left: 4px solid #2a8a9a;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 0.95em;
+            color: #a0c4d4;
+        }
+
+        .conclusion {
+            background: rgba(42, 138, 154, 0.15);
+            border-left: 4px solid #2a8a9a;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 0.95em;
+            color: #a0c4d4;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            border-top: 4px solid white;
+            width: 40px;
+            height: 40px;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: rgba(200, 50, 50, 0.1);
+            color: #ff7070;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(200, 50, 50, 0.3);
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .respuestas-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .ruta-paso {
+                display: block;
+                margin: 5px 0;
+            }
+
+            .flecha {
+                display: block;
+                text-align: center;
+                margin: 3px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Análisis de Red Electoral</h1>
+            <p>Respuestas a las 5 preguntas clave sobre influencia, intermediación y resiliencia</p>
+            <button onclick="regresarAlSistema()" style="margin-top: 15px; padding: 10px 20px; background: linear-gradient(135deg, #1f525b 0%, #2a6a7a 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; font-weight: 600; transition: transform 0.2s ease;">Regresar al Inicio</button>
+        </header>
+
+        <div id="content" class="loading">
+            <div class="spinner"></div>
+            <p>Cargando análisis...</p>
+        </div>
+
+        <footer>
+            <p>Sistema de análisis de red electoral - Matemáticas para la Informática ITM</p>
+        </footer>
+    </div>
+
+    <script>
+        async function cargarRespuestas() {
+            try {
+                const response = await fetch('/respuestas_5_preguntas');
+                const data = await response.json();
+
+                if (data.error) {
+                    document.getElementById('content').innerHTML = `
+                        <div class="error">
+                            <strong>Error:</strong> ${data.error}
+                        </div>
+                    `;
+                    return;
+                }
+
+                const html = generarHTML(data);
+                document.getElementById('content').innerHTML = html;
+            } catch (error) {
+                document.getElementById('content').innerHTML = `
+                    <div class="error">
+                        <strong>Error de conexión:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function generarHTML(data) {
+            return `
+                <div class="respuestas-grid">
+                    <!-- PREGUNTA 1 -->
+                    <div class="card pregunta-1">
+                        <div class="card-header">Pregunta 1</div>
+                        <div class="card-content">
+                            <div class="respuesta-titulo">${data.pregunta_1.titulo}</div>
+                            <div class="ruta-container">
+                                <strong>Ruta más corta:</strong><br>
+                                ${data.pregunta_1.ruta.map(nodo => `
+                                    <span class="ruta-paso ${nodo.tipo === 'medio' ? 'medio' : nodo.tipo === 'candidato' ? 'candidato' : 'departamento'}">
+                                        ${nodo.nombre}
+                                    </span>
+                                `).join('<span class="flecha">-></span>')}
+                            </div>
+                            <div class="metrica">
+                                <span class="metrica-label">Costo Total:</span>
+                                <span class="metrica-valor">${data.pregunta_1.costo_total}</span>
+                            </div>
+                            <div class="metrica">
+                                <span class="metrica-label">Longitud:</span>
+                                <span class="metrica-valor">${data.pregunta_1.ruta.length} nodos</span>
+                            </div>
+                            <div class="hallazgo">
+                                Existe una ruta directa si el medio tiene cobertura geográfica. Si no, debe pasar por un candidato como intermediario.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PREGUNTA 2 -->
+                    <div class="card pregunta-2">
+                        <div class="card-header">Pregunta 2</div>
+                        <div class="card-content">
+                            <div class="respuesta-titulo">${data.pregunta_2.titulo}</div>
+                            <div class="metrica">
+                                <span class="metrica-label">Candidato Top:</span>
+                                <span class="metrica-valor">${data.pregunta_2.candidato_top.nombre}</span>
+                            </div>
+                            <div class="metrica">
+                                <span class="metrica-label">Betweenness Centrality:</span>
+                                <span class="metrica-valor">${data.pregunta_2.candidato_top.betweenness}</span>
+                            </div>
+                            <div class="metrica">
+                                <span class="metrica-label">Intermediación:</span>
+                                <span class="metrica-valor">${data.pregunta_2.candidato_top.pct}%</span>
+                            </div>
+                            <table class="tabla-candidatos" style="margin-top: 15px;">
+                                <tr>
+                                    <th>Candidato</th>
+                                    <th>Betweenness</th>
+                                    <th>%</th>
+                                </tr>
+                                ${data.pregunta_2.intermediarios.map(cand => `
+                                    <tr>
+                                        <td><strong>${cand.nombre}</strong></td>
+                                        <td>${cand.betweenness}</td>
+                                        <td>${cand.pct}%</td>
+                                    </tr>
+                                `).join('')}
+                            </table>
+                            <div class="hallazgo">
+                                <strong>Hallazgo:</strong> ${data.pregunta_2.hallazgo}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PREGUNTA 3 -->
+                    <div class="card pregunta-3">
+                        <div class="card-header">Pregunta 3</div>
+                        <div class="card-content">
+                            <div class="respuesta-titulo">${data.pregunta_3.titulo}</div>
+                            <div class="estadistica">
+                                <div class="estadistica-item">
+                                    <div class="estadistica-valor">Mejor promedio</div>
+                                    <div class="estadistica-label">${data.pregunta_3.mas_accesible.departamento}</div>
+                                    <div style="font-size: 0.8em; margin-top: 3px;">Medios contados: ${data.pregunta_3.mas_accesible.medios_contados}</div>
+                                    <div style="font-size: 0.8em;">Costo promedio: ${data.pregunta_3.mas_accesible.promedio_costo}</div>
+                                </div>
+                                <div class="estadistica-item">
+                                    <div class="estadistica-valor">Peor promedio</div>
+                                    <div class="estadistica-label">${data.pregunta_3.menos_accesible.departamento}</div>
+                                    <div style="font-size: 0.8em; margin-top: 3px;">Medios contados: ${data.pregunta_3.menos_accesible.medios_contados}</div>
+                                    <div style="font-size: 0.8em;">Costo promedio: ${data.pregunta_3.menos_accesible.promedio_costo}</div>
+                                </div>
+                            </div>
+                            <div class="hallazgo">
+                                <strong>Hallazgo:</strong> ${data.pregunta_3.hallazgo}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PREGUNTA 4 -->
+                    <div class="card pregunta-4">
+                        <div class="card-header">Pregunta 4</div>
+                        <div class="card-content">
+                            <div class="respuesta-titulo">${data.pregunta_4.titulo}</div>
+                            <div class="metrica">
+                                <span class="metrica-label">¿Cambia significativamente?</span>
+                                <span class="metrica-valor">${data.pregunta_4.cambio_significativo ? 'SI' : 'NO'}</span>
+                            </div>
+                            <div class="hallazgo">
+                                <strong>Respuesta:</strong> ${data.pregunta_4.respuesta}
+                                <br><br>
+                                <strong>Razón:</strong> ${data.pregunta_4.razon}
+                            </div>
+                            <div style="background: rgba(15, 19, 24, 0.8); padding: 15px; border-radius: 6px; margin-top: 15px; font-size: 0.9em; border: 1px solid #1f525b; color: #a0c4d4;">
+                                <strong style="color: #ffffff;">Criterios alternativos:</strong>
+                                <ul style="margin-top: 10px; margin-left: 20px; color: #a0c4d4;">
+                                    <li>Logarítmico: Cambio leve en ranking</li>
+                                    <li>Lineal: Cambio moderado en magnitudes</li>
+                                    <li>Directo (inverso): Resultados completamente distintos</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PREGUNTA 5 -->
+                    <div class="card pregunta-5">
+                        <div class="card-header">Pregunta 5</div>
+                        <div class="card-content">
+                            <div class="respuesta-titulo">${data.pregunta_5.titulo}</div>
+                            <div class="metrica">
+                                <span class="metrica-label">Conectividad Mantenida:</span>
+                                <span class="metrica-valor">${data.pregunta_5.conectividad_mantenida}</span>
+                            </div>
+                            <div class="metrica">
+                                <span class="metrica-label">Eliminar candidato individualmente:</span>
+                                <span class="metrica-valor" style="font-size: 0.9em;">${data.pregunta_5.respuesta_eliminacion_individual}</span>
+                            </div>
+                            <div class="metrica">
+                                <span class="metrica-label">Eliminar todos los candidatos:</span>
+                                <span class="metrica-valor" style="font-size: 0.9em;">${data.pregunta_5.respuesta_eliminacion_todos}</span>
+                            </div>
+                            <div class="metrica">
+                                <span class="metrica-label">Conectividad sin candidatos:</span>
+                                <span class="metrica-valor">${data.pregunta_5.porcentaje_conectividad_sin_candidatos}%</span>
+                            </div>
+                            <div class="metrica">
+                                <span class="metrica-label">Conclusión:</span>
+                                <span style="display: block; margin-top: 8px; font-size: 0.9em; color: #2e7d32;">
+                                    <span class="badge badge-resiliente">${data.pregunta_5.conclusion}</span>
+                                </span>
+                            </div>
+                            <table class="tabla-candidatos" style="margin-top: 15px; font-size: 0.85em;">
+                                <tr>
+                                    <th>Candidato</th>
+                                    <th>Betweenness</th>
+                                    <th>Conectividad</th>
+                                    <th>Estado</th>
+                                </tr>
+                                ${data.pregunta_5.resiliencia.map(res => `
+                                    <tr>
+                                        <td><strong>${res.candidato}</strong></td>
+                                        <td>${res.betweenness}</td>
+                                        <td>${res.conectividad_pct}%</td>
+                                        <td>
+                                            <span class="badge ${res.es_critico === 'MÁS CRÍTICO' ? 'badge-critico' : 'badge-secundario'}">
+                                                ${res.es_critico}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </table>
+                            <div class="conclusion">
+                                <strong>Conclusión:</strong> La red es altamente resiliente. No hay "punto de fallo único" (single point of failure).
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function regresarAlSistema() {
+            window.location.href = '/';
+        }
+
+        // Cargar respuestas al abrir la página
+        document.addEventListener('DOMContentLoaded', cargarRespuestas);
+    </script>
+</body>
+</html>

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Grafos - Ruta de Influencia</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Influencia Electoral - Grafos</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
 </head>
@@ -12,35 +13,136 @@
 <div class="layout">
 
     <div class="panel">
-        <h2>Ruta de Influencia</h2>
+        <h2>Análisis de Influencia Electoral</h2>
+        
+        <!-- SECCIÓN 0: RESPUESTAS A LAS 5 PREGUNTAS -->
+        <div class="seccion" style="background: linear-gradient(135deg, #1f525b 0%, #2a6a7a 100%); color: white; border-radius: 10px; padding: 15px;">
+            <h3 style="margin: 0 0 10px 0; text-align: center; color: #a0c4d4; border: none;">RESPUESTAS A LAS 5 PREGUNTAS</h3>
+            <p style="font-size: 0.9em; margin: 0 0 10px 0; text-align: center; color: #a0c4d4;">Ver análisis completo de la red electoral</p>
+            <a href="/dashboard" style="
+                display: block;
+                background: #a0c4d4;
+                color: #1a1f2e;
+                padding: 10px;
+                border-radius: 6px;
+                text-align: center;
+                font-weight: bold;
+                text-decoration: none;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                Abrir Dashboard de Análisis
+            </a>
+        </div>
+        
+        <!-- SECCIÓN 1: RUTA ENTRE ACTORES -->
+        <div class="seccion">
+            <h3>Ruta Óptima Entre Actores</h3>
+            
+            <label>Tipo de Origen</label>
+            <select id="tipo_origen" disabled></select>
 
-        <label>Tipo de Origen</label>
-        <select id="tipo_origen"></select>
+            <label>Origen</label>
+            <select id="origen" disabled></select>
 
-        <label>Origen</label>
-        <select id="origen"></select>
+            <label>Tipo de Destino</label>
+            <select id="tipo_destino" disabled></select>
 
-        <label>Tipo de Destino</label>
-        <select id="tipo_destino" disabled></select>
+            <label>Destino</label>
+            <select id="destino" disabled></select>
 
-        <label>Destino</label>
-        <select id="destino" disabled></select>
+            <label>Criterio de Costo</label>
+            <select id="criterio_costo">
+                <option value="inverso">Inverso (1/peso) - Menor resistencia</option>
+                <option value="directo">Directo (peso) - Menor influencia directa</option>
+            </select>
 
-        <button onclick="calcularRuta()">Calcular Ruta</button>
+            <button onclick="calcularRuta()">Calcular Ruta</button>
+            <button onclick="limpiarRuta()" style="background-color: #e74c3c; margin-top: 8px;">Limpiar</button>
+        </div>
 
-        <pre id="resultado"></pre>
+        <!-- SECCIÓN 2: COMPARACIÓN DE CRITERIOS -->
+        <div class="seccion">
+            <h3>RETO 1: Comparar Criterios</h3>
+            <button onclick="compararCriterios()">Comparar 2 Criterios</button>
+        </div>
+
+        <!-- SECCIÓN 3: CENTRALIDAD -->
+        <div class="seccion">
+            <h3>RETO 2: Intermediarios</h3>
+            <button onclick="mostrarCentralidad()">Top Betweenness</button>
+        </div>
+
+        <!-- SECCIÓN 4: ACCESIBILIDAD DESDE MEDIOS -->
+        <div class="seccion">
+            <h3>RETO 2: Árbol de Alcance</h3>
+            <label>Medio de Comunicación:</label>
+            <select id="medio_accesibilidad"></select>
+            <button onclick="mostrarAccesibilidad()">Mostrar Alcance</button>
+        </div>
+
+        <!-- SECCIÓN 5: RESILIENCIA -->
+        <div class="seccion">
+            <h3>RETO 3: Resiliencia</h3>
+            <button onclick="mostrarResiliencia()">Simular Eliminar</button>
+        </div>
+
     </div>
 
     <div class="grafo-container">
         <div id="grafo"></div>
+        <!-- Leyenda del Grafo -->
+        <div class="legend">
+            <!-- Botón de filtro arriba -->
+            <button class="btn-filtro-leyenda" onclick="abrirFiltroPopup()">FILTRO</button>
+            
+            <!-- Popup de Filtro -->
+            <div id="filtroPopup" class="filtro-popup-leyenda">
+                <div class="filtro-popup-content-leyenda">
+                    <button class="filtro-btn-leyenda active" onclick="filtrarGrafo('todos'); cerrarFiltroPopup();">TODOS</button>
+                    <button class="filtro-btn-leyenda" onclick="filtrarGrafo('medio'); cerrarFiltroPopup();">MEDIOS</button>
+                    <button class="filtro-btn-leyenda" onclick="filtrarGrafo('candidato'); cerrarFiltroPopup();">CANDIDATOS</button>
+                    <button class="filtro-btn-leyenda" onclick="filtrarGrafo('departamento'); cerrarFiltroPopup();">DEPTO</button>
+                    <button class="filtro-btn-leyenda" onclick="filtrarGrafo('franja_demografica'); cerrarFiltroPopup();">FRANJAS</button>
+                </div>
+            </div>
+            
+            <div style="margin-top: 12px;"><strong>Leyenda (Click para ver)</strong></div>
+            <div class="legend-item" onclick="mostrarItemsCategoria('medio')">
+                <div class="legend-dot medio"></div>
+                <span>Medios</span>
+            </div>
+            <div class="legend-item" onclick="mostrarItemsCategoria('candidato')">
+                <div class="legend-dot candidato"></div>
+                <span>Candidatos</span>
+            </div>
+            <div class="legend-item" onclick="mostrarItemsCategoria('departamento')">
+                <div class="legend-dot departamento"></div>
+                <span>Departamentos</span>
+            </div>
+            <div class="legend-item" onclick="mostrarItemsCategoria('franja_demografica')">
+                <div class="legend-dot franja"></div>
+                <span>Franjas</span>
+            </div>
+            <hr style="margin: 8px 0; border: none; border-top: 1px solid #ccc;">
+            <div style="font-size: 10px; color: #666;">Click: Info | Scroll: Zoom | Drag: Mover</div>
+        </div>
     </div>
 
+</div>
+
+<!-- MODAL DETALLE DEL NODO -->
+<div id="detalleModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="document.getElementById('detalleModal').style.display='none'">&times;</span>
+        <div id="detalleContent"></div>
+    </div>
 </div>
 
 <script src="{{ url_for('static', filename='js/nodos.js') }}"></script>
 <script src="{{ url_for('static', filename='js/formularios.js') }}"></script>
 <script src="{{ url_for('static', filename='js/grafo.js') }}"></script>
 <script src="{{ url_for('static', filename='js/ruta.js') }}"></script>
+<script src="{{ url_for('static', filename='js/analisis.js') }}"></script>
 
 </body>
 </html>

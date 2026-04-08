@@ -22,7 +22,8 @@ function configurarEventoOrigen() {
                     return;
                 }
                 
-                const tipos = [...new Set(vecinos.map(v => v.tipo))];
+                const tipos = [...new Set(vecinos.map(v => v.tipo))]
+                    .sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
                 
                 tipos.forEach(t => {
                     tipoDestino.appendChild(new Option(t, t));
@@ -42,6 +43,7 @@ function configurarEventoTipoDestino() {
         
         vecinosActuales
             .filter(v => v.tipo === tipo)
+            .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }))
             .forEach(v => {
                 destinoSelect.appendChild(new Option(v.nombre, v.id));
             });
@@ -53,3 +55,25 @@ document.addEventListener("DOMContentLoaded", function () {
     configurarEventoOrigen();
     configurarEventoTipoDestino();
 });
+
+// Función para limpiar los datos del formulario de ruta
+function limpiarRuta() {
+    // Limpiar los selectores
+    document.getElementById("tipo_origen").value = "";
+    document.getElementById("origen").value = "";
+    document.getElementById("tipo_destino").value = "";
+    document.getElementById("tipo_destino").disabled = true;
+    document.getElementById("destino").value = "";
+    document.getElementById("destino").disabled = true;
+    
+    // Limpiar el resultado
+    document.getElementById("resultado").innerText = "";
+    
+    // Limpiar la variable de vecinos
+    vecinosActuales = [];
+    
+    // Limpiar la ruta en el grafo
+    if(typeof limpiarHighlight === 'function') {
+        limpiarHighlight();
+    }
+}
