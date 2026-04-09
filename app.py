@@ -199,9 +199,6 @@ def vecinos():
 
     return jsonify(resultado)
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# NUEVOS ENDPOINTS - ANÁLISIS AVANZADO
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 @app.route("/centralidad")
 def centralidad():
@@ -623,6 +620,7 @@ def respuestas_5_preguntas():
                 "titulo": "¿Qué departamento es el más difícil de alcanzar desde los medios seleccionados?",
                 "mas_accesible": mas_accesible,
                 "menos_accesible": menos_accesible,
+                "todos_departamentos": dept_promedios,
                 "hallazgo": hallazgo_3
             },
             "pregunta_4": {

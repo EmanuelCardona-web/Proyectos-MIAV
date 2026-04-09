@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Respuesta 5 Preguntas</title>
     <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -350,6 +351,9 @@
 
                 const html = generarHTML(data);
                 document.getElementById('content').innerHTML = html;
+
+                // Crear gráfico para pregunta 3
+                crearGraficoDepartamentos(data.pregunta_3.todos_departamentos);
             } catch (error) {
                 document.getElementById('content').innerHTML = `
                     <div class="error">
@@ -448,6 +452,9 @@
                             <div class="hallazgo">
                                 <strong>Hallazgo:</strong> ${data.pregunta_3.hallazgo}
                             </div>
+                            <div style="margin-top: 20px;">
+                                <canvas id="chartDepartamentos" width="400" height="200"></canvas>
+                            </div>
                         </div>
                     </div>
 
@@ -530,6 +537,53 @@
                     </div>
                 </div>
             `;
+        }
+
+        function crearGraficoDepartamentos(departamentos) {
+            const ctx = document.getElementById('chartDepartamentos').getContext('2d');
+            const labels = departamentos.map(d => d.departamento);
+            const data = departamentos.map(d => d.promedio_costo);
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Costo Promedio de Accesibilidad',
+                        data: data,
+                        backgroundColor: 'rgba(31, 82, 91, 0.6)',
+                        borderColor: 'rgba(31, 82, 91, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Costo Promedio'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Departamentos'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Accesibilidad de Departamentos desde Medios'
+                        }
+                    }
+                }
+            });
         }
 
         function regresarAlSistema() {
